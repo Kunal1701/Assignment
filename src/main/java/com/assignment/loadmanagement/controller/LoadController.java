@@ -31,9 +31,10 @@ public class LoadController {
         public void deleteLoad( @PathVariable String id){
             loadDao.deleteLoad(Long.parseLong(id));
         }
-        @PutMapping("/load")
-        public void updateLoad(@RequestBody Load load){
-            loadDao.updateLoad(load);
+        @PutMapping("/load/{id}")
+        public void updateLoad(@RequestBody Load load, @PathVariable String id){
+            loadDao.updateLoad(load, Long.parseLong(id));
+
         }
 
 }

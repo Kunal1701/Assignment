@@ -1,12 +1,15 @@
 package com.assignment.loadmanagement.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "load")
 public class Load {
     @Id
-    public long shipmentId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public long id;
+    public String shipmentId;
     public String loadingPoint;
     public String unloadingPoint;
     public String productType;
@@ -16,8 +19,11 @@ public class Load {
     public String comment;
     public String date;
 
-    public Load(long shipmentId, String loadingPoint, String unloadingPoint, String productType, String weight, String truckType, String noOfTrucks, String comment, String date) {
-        super();
+    public Load() {
+    }
+
+    public Load(long id, String shipmentId, String loadingPoint, String unloadingPoint, String productType, String weight, String truckType, String noOfTrucks, String comment, String date) {
+        this.id = id;
         this.shipmentId = shipmentId;
         this.loadingPoint = loadingPoint;
         this.unloadingPoint = unloadingPoint;
@@ -29,13 +35,11 @@ public class Load {
         this.date = date;
     }
 
-    public Load() {
-        super();
-    }
     @Override
     public String toString() {
         return "Load{" +
-                "shipmentId=" + shipmentId +
+                "id=" + id +
+                ", shipmentId='" + shipmentId + '\'' +
                 ", loadingPoint='" + loadingPoint + '\'' +
                 ", unloadingPoint='" + unloadingPoint + '\'' +
                 ", productType='" + productType + '\'' +
@@ -46,11 +50,20 @@ public class Load {
                 ", date='" + date + '\'' +
                 '}';
     }
-    public long getShipmentId() {
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getShipmentId() {
         return shipmentId;
     }
 
-    public void setShipmentId(long shipmentId) {
+    public void setShipmentId(String shipmentId) {
         this.shipmentId = shipmentId;
     }
 
@@ -117,5 +130,4 @@ public class Load {
     public void setDate(String date) {
         this.date = date;
     }
-
 }
