@@ -2,14 +2,16 @@ package com.assignment.loadmanagement.dao;
 
 import com.assignment.loadmanagement.model.Load;
 import jakarta.persistence.*;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.List;
+import java.util.function.Consumer;
+
 public class JpaLoadDaoImpl implements LoadDao {
-    @Autowired
     private EntityManager entityManager;
 
+
     public JpaLoadDaoImpl() {
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("loadmanagement");
+        entityManager = entityManagerFactory.createEntityManager();
     }
 
     @Override
@@ -25,19 +27,33 @@ public class JpaLoadDaoImpl implements LoadDao {
 
     @Override
     public void saveLoad(Load load) {
-        entityManager.persist(load);
+        executeInsideTransaction(entityManager -> entityManager.persist(load));
     }
 
     @Override
     public void updateLoad(Load load) {
-        entityManager.merge(load);
+        executeInsideTransaction(entityManager -> entityManager.merge(load));
     }
 
     @Override
     public void deleteLoad(long shipmentId) {
-        Load load = getLoadById(shipmentId);
-        entityManager.remove(load);
+        executeInsideTransaction(entityManager -> {
+            Load load = entityManager.find(Load.class, shipmentId);
+            entityManager.remove(load);
+        });
 
+    }
+    private void executeInsideTransaction(Consumer<EntityManager> action) {
+        EntityTransaction tx = entityManager.getTransaction();
+        try {
+            tx.begin();
+            action.accept(entityManager);
+            tx.commit();
+        }
+        catch (RuntimeException e) {
+            tx.rollback();
+            throw e;
+        }
     }
 
 
